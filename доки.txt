@@ -1,0 +1,14 @@
+@dp.errors()
+async def error_msg(event: ErrorEvent):
+    await event.update.message.answer("Упс..\nЧто-то пошло не так, уже чиним 💨")
+
+
+    logger.error(f"Exception: {event.exception}")
+    return event.exception
+
+=========================================================================================
+|                        @router.message(F.photo)                                       |
+|                        async def start_command(message: Message):                     |
+|                            photo = message.photo[-1]                                  |
+|                            await message.answer(f"{photo}")                           |
+=========================================================================================
