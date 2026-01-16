@@ -12,3 +12,9 @@ async def error_msg(event: ErrorEvent):
 |                            photo = message.photo[-1]                                  |
 |                            await message.answer(f"{photo}")                           |
 =========================================================================================
+
+@router.callback_query(F.data == "main_view")
+
+await callback_query.message.edit_caption(
+            caption=""
+        )

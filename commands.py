@@ -28,7 +28,7 @@ async def start_command(message: Message):
 
 
 @router.message(CommandStart())
-async def start_cmd(message: types.Message):
+async def start_cmd_about(message: types.Message):
     text = ("Это бот нацелен на помощь и поддержку как школьников, так и учителей и преподователей"
             " для этого отправьте команду /main")
     pictireFile = open('resources/start_picture').read().strip()
@@ -37,7 +37,7 @@ async def start_cmd(message: types.Message):
 
 @router.message(Command("main"))
 async def start_command(message: Message):
-    logger.info(f"[COMMAND] [{message.from_user.username}] отправил команду [start]")
+    logger.info(f"[COMMAND] [{message.from_user.username}] отправил команду [/main]")
     pictireFile = open('resources/mein_picture').read().strip()
     text = ("Добро пожаловать! Выберите опцию: "
             "\n    🖨 - хранилище инструкций "
