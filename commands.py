@@ -27,6 +27,20 @@ async def start_command(message: Message):
     await message.answer(f"{photo}")
 
 
+@router.message(Command("getid"))
+async def get_chat_id(message: types.Message):
+    chat_info = (
+        f"👤 Ваш ID: `{message.from_user.id}`\n"
+        f"💬 ID этого чата: `{message.chat.id}`\n"
+        f"📝 Тип чата: {message.chat.type}\n"
+        f"{message.message_thread_id}\n"
+    )
+
+    if message.chat.type in ["group", "supergroup"]:
+        chat_info += f"📛 Название группы: {message.chat.title}"
+
+    await message.answer(chat_info, parse_mode="Markdown")
+
 @router.message(CommandStart())
 async def start_cmd_about(message: types.Message):
     text = ("Это бот нацелен на помощь и поддержку как школьников, так и учителей и преподователей"
@@ -49,7 +63,3 @@ async def start_command(message: Message):
         caption=text,
         reply_markup=kbBase_main_menu.main_menu_view()
     )
-
-@router.message()
-async def unknown_command(message: Message):
-    await message.answer("Такой команды пока не судешствует ⛑")

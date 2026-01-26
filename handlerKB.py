@@ -1,9 +1,13 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
+
+from supFuns import supRespStat
 from inlineKeyBoard_db import kbBase_main_menu, kbBase_equip_main_menu, kb_test
 import logging
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 import asyncio
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
 
 router = Router()
 logger = logging.getLogger(__name__)
@@ -178,12 +182,15 @@ class sup_menu:
         router.callback_query(F.data == "sup_idea")(self.handle_sup_idea)
         router.callback_query(F.data == "sup_mis")(self.handle_sup_mis)
 
-    async def handle_sup_idea(self, callback_query: CallbackQuery):
+    async def handle_sup_idea(self, callback_query: CallbackQuery, state: FSMContext):
         await callback_query.message.answer("Напишите в сообщении ниже вашу идею, она будет переданна разработчикам")
         await callback_query.answer()
+        await state.set_state(supRespStat.waitingForIdeaMessage)
 
-    async def handle_sup_mis(self, callback_query: CallbackQuery):
+    async def handle_sup_mis(self, callback_query: CallbackQuery, state: FSMContext):
+
         await callback_query.message.answer("Напишите в сообщении ниже: название, категория оборудования и какие ошибки допущены при составлении инструкии")
         await callback_query.answer()
+        await state.set_state(supRespStat.waitingForMissMessage)
 sup_menu_class = sup_menu()
 

@@ -5,6 +5,7 @@ from typing import Dict, List
 '''Роутеры'''
 from commands import router as commands_router
 from handlerKB import router as kb_router
+from supFuns import wait_router
 '''Утилиты'''
 from datetime import datetime
 from setLogging import logger
@@ -20,8 +21,9 @@ async def startBot():
         dp = Dispatcher()
         dp.include_router(kb_router)
         dp.include_router(commands_router)
+        dp.include_router(wait_router)
 
-        bot = Bot(open('token.txt').read().strip())
+        bot = Bot(open('token').read().strip())
 
         await reg_start_time()
         await dp.start_polling(bot, skip_updates=True)
