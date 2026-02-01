@@ -1,10 +1,12 @@
+from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from inlineKeyBoard_db import kbBase_main_menu
-from aiogram import Router, types, F
+from aiogram import Router, types
 from aiogram.filters import CommandStart, Command
 import logging
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 
+from neuroChatting import ChatStates
 
 router = Router()
 logger = logging.getLogger(__name__)
@@ -47,6 +49,11 @@ async def start_cmd_about(message: types.Message):
             " для этого отправьте команду /main")
     pictireFile = open('resources/start_picture').read().strip()
     await message.answer_photo(photo=pictireFile, caption=text)
+
+@router.message(Command("ai"))
+async def start_command(message: Message, state: FSMContext):
+    await message.answer(text="Вкл чаттинг")
+    await state.set_state(ChatStates.IsNeuralChatting)
 
 
 @router.message(Command("main"))

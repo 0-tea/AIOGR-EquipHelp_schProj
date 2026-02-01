@@ -1,4 +1,4 @@
-from aiogram import Bot, Dispatcher, types, Router
+from aiogram import Bot, types, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 '''

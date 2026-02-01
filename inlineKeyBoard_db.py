@@ -16,7 +16,7 @@ class main_menu:
         keyboard_main = InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="🖨 - Оборудование", callback_data="equip")],
-                [InlineKeyboardButton(text="🎨 - Нейро-подсказка", callback_data="neuro")],
+                [InlineKeyboardButton(text="🎨 - Чат с ИИ-помощником", callback_data="neuro")],
                 [InlineKeyboardButton(text="🎮 - Тесты и комнаты", callback_data="room")],
                 [InlineKeyboardButton(text="⛑ - Обратная связь", callback_data="support")],
             ]
