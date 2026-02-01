@@ -18,3 +18,11 @@ async def error_msg(event: ErrorEvent):
 await callback_query.message.edit_caption(
             caption=""
         )
+
+            await callback_query.message.delete()
+            await asyncio.sleep(0.7)
+            await callback_query.message.answer_photo(
+                photo=pictireFile,
+                caption="Сообщите об ошибке или предложите идею. Сообщение будет пересланно в чат поддержки.",
+                reply_markup=kbBase_main_menu.kb_sup_view()
+            )

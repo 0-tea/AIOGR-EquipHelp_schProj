@@ -2,6 +2,8 @@
 import asyncio
 from aiogram import Bot, Dispatcher
 from typing import Dict, List
+from dotenv import load_dotenv
+import os
 '''Роутеры'''
 from commands import router as commands_router
 from handlerKB import router as kb_router
@@ -23,13 +25,14 @@ async def startBot():
         dp.include_router(commands_router)
         dp.include_router(wait_router)
 
-        bot = Bot(open('token').read().strip())
+        load_dotenv('tokens.env')
+        bot = Bot(os.getenv('TELEGRAM_BOT_TOKEN'))
 
         await reg_start_time()
         await dp.start_polling(bot, skip_updates=True)
 
-    except FileNotFoundError:
-        logger.critical("Отсутствует токен. 🥀")
+    except Exception:
+        logger.critical("Беда с токеном. 🥀")
 
 
 async def reg_start_time():

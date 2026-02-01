@@ -1,4 +1,5 @@
 from aiogram import Router, F
+from aiogram.fsm import state
 from aiogram.types import CallbackQuery
 
 from supFuns import supRespStat
@@ -8,6 +9,7 @@ from aiogram.dispatcher.middlewares.base import BaseMiddleware
 import asyncio
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
+from supFuns import supRespStat
 
 router = Router()
 logger = logging.getLogger(__name__)
@@ -67,13 +69,16 @@ class main_menu:
         router.callback_query(F.data == "test")(self.hand_test)
 
     async def hand_test(self, callback_query: CallbackQuery):
-        await callback_query.message.answer("Тут кнопки с разными вариантами обновления, какой больше нравится ?", reply_markup=kb_test())
+        await callback_query.message.answer("Тут кнопки с разными вариантами обновления, какой больше нравится ?",
+            reply_markup=kb_test())
         await callback_query.answer()
 
 
     async def handle_main_view(self, callback_query: CallbackQuery):
+        await callback_query.message.delete()
+        await asyncio.sleep(0.7)
         pictireFile = open('resources/mein_picture').read().strip()
-        text = ("Выберите опцию: "
+        text = ("Выберите опцию из предложенных ниже: "
                 "\n    🖨 - хранилище инструкций "
                 "\n    🎨 - Открывает диалог с нейронной сетью"
                 "\n    🎮 - Комнаты для обучения"
@@ -86,28 +91,48 @@ class main_menu:
         await callback_query.answer()
 
     async def handle_equip(self, callback_query: CallbackQuery):
-        await callback_query.message.edit_caption(
-            caption="Выерите категорию оборудования:",
-            reply_markup=kbBase_equip_main_menu.equips_menu()
-        )
+        pictireFile = open('resources/mein_picture').read().strip()
+        if "Выберите опцию" in callback_query.message.caption:
+            await callback_query.message.edit_caption(
+                caption="Выерите категорию оборудования, по которой вам нужна помощь:",
+                reply_markup=kbBase_equip_main_menu.equips_menu()
+            )
+
+        else:
+            await callback_query.message.delete()
+            await asyncio.sleep(0.7)
+            await callback_query.message.answer_photo(
+                photo=pictireFile,
+                caption="Выерите категорию оборудования, по которой вам нужна помощь:",
+                reply_markup=kbBase_equip_main_menu.equips_menu()
+            )
         await callback_query.answer()
 
     async def handle_neuro(self, callback_query: CallbackQuery):
         await callback_query.message.edit_text(
-            text="Запускается режим общения с нейронной сетью, напишите стоп, что бы из него выйти"
+            text="Запускается режим общения с нейронной сетью, напишите стоп, что бы выйти в главное меню и остановить режим общения."
         )
         await callback_query.answer()
 
     async def handle_room(self, callback_query: CallbackQuery):
         await callback_query.message.edit_caption(
-            caption="Вы выбрали: Комнаты", reply_markup=kbBase_main_menu.kb_room_view()
+            caption="Присоеденитесь к уже существующей комнате, создайте свою или пройдите тест самостоятельно.",
+            reply_markup=kbBase_main_menu.kb_room_view()
         )
         await callback_query.answer()
 
-    async def handle_support(self, callback_query: CallbackQuery):
-        await callback_query.message.edit_caption(
-            caption="Вы выбрали: Поддержка", reply_markup=kbBase_main_menu.kb_sup_view()
-        )
+    async def handle_support(self, callback_query: CallbackQuery, state: FSMContext):
+        try:
+            await callback_query.message.edit_caption(
+                caption="Сообщите об ошибке или предложите идею. Сообщение будет пересланно в чат поддержки.",
+                reply_markup=kbBase_main_menu.kb_sup_view()
+            )
+        except:
+            await callback_query.message.delete()
+
+            await state.clear()
+            await state.clear()
+
         await callback_query.answer()
 main_menu_class = main_menu()
 
@@ -122,41 +147,41 @@ class eqiup_menu_kategiry:
 
     async def handle_equipMenu_autRob(self, callback_query: CallbackQuery):
         await callback_query.message.edit_caption(
-            caption="Вы выбрали категорию автоматических роботов",
+            caption="Выберите категорию автоматических роботов.",
             reply_markup=kbBase_equip_main_menu.robots.kb_equipMenu_autRobots(self)
         )
         await callback_query.answer()
 
     async def handle_equipMenu_legoRob(self, callback_query: CallbackQuery):
         await callback_query.message.edit_caption(
-            caption="Вы выбрали категорию лего роботов",
+            caption="Выберите категорию лего роботов.",
             reply_markup=kbBase_equip_main_menu.robots.kb_equipMenu_legoRobots(self)
         )
         await callback_query.answer()
 
     async def handle_equipMenu_stanc(self, callback_query: CallbackQuery):
         await callback_query.message.edit_caption(
-            caption="Вы выбрали категорию настольные/стационарные станции",
+            caption="Выберите категорию настольных или стационарных станций.",
             reply_markup=kbBase_equip_main_menu.stacion.kb_equipMenu_stacion(self)
         )
         await callback_query.answer()
 
     async def handle_equipMenu_BPLA(self, callback_query: CallbackQuery):
         await callback_query.message.edit_caption(
-            caption="Вы выбрали категорию БПЛА",
+            caption="Выберите категорию БПЛА.",
             reply_markup=kbBase_equip_main_menu.BPLA.kb_equipMenu_BPLA(self)
         )
         await callback_query.answer()
     async def handle_equipMenu_3Dprint(self, callback_query: CallbackQuery):
         await callback_query.message.edit_caption(
-            caption="Вы выбрали категорию 3д принеры",
+            caption="Выберите категорию 3D принеров.",
             reply_markup=kbBase_equip_main_menu.D3printer.kb_equipMenu_D3printer(self)
         )
         await callback_query.answer()
 
     async def handle_equipMenu_rez(self, callback_query: CallbackQuery):
         await callback_query.message.edit_caption(
-            caption="Вы выбрали категорию резаки",
+            caption="Выберите категорию резаков.",
             reply_markup=kbBase_equip_main_menu.rezak.kb_equipMenu_rezak(self)
         )
         await callback_query.answer()
@@ -168,11 +193,11 @@ class room_menu_main:
         router.callback_query(F.data == "room_stud")(self.handle_room_stud)
 
     async def handle_room_teach(self, callback_query: CallbackQuery):
-        await callback_query.message.answer("Выберите темы и задания")
+        await callback_query.message.answer("Выберите темы и задания.")
         await callback_query.answer()
 
     async def handle_room_stud(self, callback_query: CallbackQuery):
-        await callback_query.message.answer("Впишите код для подключения к комнате")
+        await callback_query.message.answer("Впишите код для подключения к комнате.")
         await callback_query.answer()
 
 room_menu_main_class = room_menu_main()
@@ -183,13 +208,15 @@ class sup_menu:
         router.callback_query(F.data == "sup_mis")(self.handle_sup_mis)
 
     async def handle_sup_idea(self, callback_query: CallbackQuery, state: FSMContext):
-        await callback_query.message.answer("Напишите в сообщении ниже вашу идею, она будет переданна разработчикам")
+        await callback_query.message.answer("Напишите в сообщении ниже вашу идею, далее сообщение будет переданно в чат поддержки.",
+            reply_markup=kbBase_main_menu.sup_in_back())
         await callback_query.answer()
         await state.set_state(supRespStat.waitingForIdeaMessage)
 
     async def handle_sup_mis(self, callback_query: CallbackQuery, state: FSMContext):
 
-        await callback_query.message.answer("Напишите в сообщении ниже: название, категория оборудования и какие ошибки допущены при составлении инструкии")
+        await callback_query.message.answer("Напишите в сообщении ниже: категорию, название и опишите ошибки допущенные в инструкциях. Далее сообщение будет переданно в чат поддержки",
+            reply_markup=kbBase_main_menu.sup_in_back())
         await callback_query.answer()
         await state.set_state(supRespStat.waitingForMissMessage)
 sup_menu_class = sup_menu()

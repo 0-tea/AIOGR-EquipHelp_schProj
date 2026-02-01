@@ -17,7 +17,7 @@ class main_menu:
             inline_keyboard=[
                 [InlineKeyboardButton(text="🖨 - Оборудование", callback_data="equip")],
                 [InlineKeyboardButton(text="🎨 - Нейро-подсказка", callback_data="neuro")],
-                [InlineKeyboardButton(text="🎮 - Комнаты", callback_data="room")],
+                [InlineKeyboardButton(text="🎮 - Тесты и комнаты", callback_data="room")],
                 [InlineKeyboardButton(text="⛑ - Обратная связь", callback_data="support")],
             ]
         )
@@ -33,11 +33,20 @@ class main_menu:
         )
         return keyboard_sup
 
+    def sup_in_back(self):
+        keyboard_sup = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="🧲 - Отмена", callback_data="support")]
+            ]
+        )
+        return keyboard_sup
+
     def kb_room_view(self):
         keyboard_room = InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="Создать", callback_data="room_create")],
                 [InlineKeyboardButton(text="Присоединиться", callback_data="room_join")],
+                [InlineKeyboardButton(text="Самостоятельное выполнение", callback_data="room_solo")],
                 [InlineKeyboardButton(text="🧲 - Назад", callback_data="main_view")]
             ]
         )

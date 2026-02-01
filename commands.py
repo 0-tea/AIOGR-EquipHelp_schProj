@@ -21,10 +21,10 @@ class LoggingCommandMiddleware(BaseMiddleware):
 router.message.middleware(LoggingCommandMiddleware())
 
 
-@router.message(F.photo)
+'''@router.message(F.photo)
 async def start_command(message: Message):
     photo = message.photo[-1]
-    await message.answer(f"{photo}")
+    await message.answer(f"{photo}")'''
 
 
 @router.message(Command("getid"))
