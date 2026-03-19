@@ -6,7 +6,7 @@ from aiogram.fsm.state import State, StatesGroup
 40 - предложка 
 '''
 
-wait_router = Router()
+wait_router_sup = Router()
 chatForSup = -1003751729107
 
 def checkAttach(message: types.Message) -> bool:
@@ -20,7 +20,7 @@ class supRespStat(StatesGroup):
     waitingForMissMessage = State()
     waitingForIdeaMessage = State()
 
-@wait_router.message(supRespStat.waitingForMissMessage)
+@wait_router_sup.message(supRespStat.waitingForMissMessage)
 async def process_user_message(message: types.Message, state: FSMContext, bot: Bot):
     '''ОШИБКА СОО'''
     user = message.from_user
@@ -56,7 +56,7 @@ async def process_user_message(message: types.Message, state: FSMContext, bot: B
     await message.answer("Сообщение успешно переслано в чат поддержки, благодарим за бдительность!")
 
 
-@wait_router.message(supRespStat.waitingForIdeaMessage)
+@wait_router_sup.message(supRespStat.waitingForIdeaMessage)
 async def process_user_message(message: types.Message, state: FSMContext, bot: Bot):
     '''ПРЕДЛОЖКА СОО'''
     user = message.from_user

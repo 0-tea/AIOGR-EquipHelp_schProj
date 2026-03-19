@@ -10,6 +10,7 @@ import asyncio
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from supFuns import supRespStat
+from neuroChatting import ChatStates
 
 router = Router()
 logger = logging.getLogger(__name__)
@@ -76,7 +77,7 @@ class main_menu:
 
     async def handle_main_view(self, callback_query: CallbackQuery):
         await callback_query.message.delete()
-        await asyncio.sleep(0.7)
+        await asyncio.sleep(0.6)
         pictireFile = open('resources/mein_picture').read().strip()
         text = ("Выберите опцию из предложенных ниже: "
                 "\n    🖨 - хранилище инструкций "
@@ -94,25 +95,26 @@ class main_menu:
         pictireFile = open('resources/mein_picture').read().strip()
         if "Выберите опцию" in callback_query.message.caption:
             await callback_query.message.edit_caption(
-                caption="Выерите категорию оборудования, по которой вам нужна помощь:",
+                caption="Выберите категорию оборудования, по которой вам нужна помощь:",
                 reply_markup=kbBase_equip_main_menu.equips_menu()
             )
 
         else:
             await callback_query.message.delete()
-            await asyncio.sleep(0.7)
+            await asyncio.sleep(0.6)
             await callback_query.message.answer_photo(
                 photo=pictireFile,
-                caption="Выерите категорию оборудования, по которой вам нужна помощь:",
+                caption="Выберите категорию оборудования, по которой вам нужна помощь:",
                 reply_markup=kbBase_equip_main_menu.equips_menu()
             )
         await callback_query.answer()
 
-    async def handle_neuro(self, callback_query: CallbackQuery):
-        await callback_query.message.edit_text(
-            text="Запускается режим общения с нейронной сетью, напишите стоп, что бы выйти в главное меню и остановить режим общения."
+    async def handle_neuro(self, callback_query: CallbackQuery, state: FSMContext):
+        await callback_query.message.edit_caption(
+            caption="Запускается режим общения с нейронной сетью, напишите стоп/stop/выход, что бы выйти в главное меню и остановить режим общения."
         )
         await callback_query.answer()
+        await state.set_state(ChatStates.IsNeuralChatting)
 
     async def handle_room(self, callback_query: CallbackQuery):
         await callback_query.message.edit_caption(

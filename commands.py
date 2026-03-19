@@ -1,12 +1,16 @@
+import asyncio
+
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
+
+import neuroChatting
 from inlineKeyBoard_db import kbBase_main_menu
 from aiogram import Router, types
 from aiogram.filters import CommandStart, Command
 import logging
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 
-from neuroChatting import ChatStates
+from neuroChatting import ChatStates, YandexNeuralChat
 
 router = Router()
 logger = logging.getLogger(__name__)
@@ -50,14 +54,15 @@ async def start_cmd_about(message: types.Message):
     pictireFile = open('resources/start_picture').read().strip()
     await message.answer_photo(photo=pictireFile, caption=text)
 
-@router.message(Command("ai"))
-async def start_command(message: Message, state: FSMContext):
-    await message.answer(text="Вкл чаттинг")
-    await state.set_state(ChatStates.IsNeuralChatting)
-
 
 @router.message(Command("main"))
-async def start_command(message: Message):
+async def start_command(message: Message, state: FSMContext):
+    if await state.get_state() == ChatStates.IsNeuralChatting:
+        await state.clear()
+        await message.answer("Вы вышли из режима общения с ИИ")
+        YandexNeuralChat.clear_chat(YandexNeuralChat(), user_id=message.from_user.username or message.from_user.id)
+        await asyncio.sleep(0.6)
+
     logger.info(f"[COMMAND] [{message.from_user.username}] отправил команду [/main]")
     pictireFile = open('resources/mein_picture').read().strip()
     text = ("Добро пожаловать! Выберите опцию: "
