@@ -190,7 +190,7 @@ class eqiup_menu_kategiry:
 
     async def handle_equipMenu_BPLA(self, callback_query: CallbackQuery):
         await callback_query.message.edit_caption(
-            caption="Выберите категорию БПЛА.",
+            caption="Выберите модель БПЛА/квадракоптера.",
             reply_markup=kbBase_equip_main_menu.BPLA.kb_equipMenu_BPLA(self)
         )
         await callback_query.answer()
@@ -207,6 +207,97 @@ class eqiup_menu_kategiry:
             reply_markup=kbBase_equip_main_menu.rezak.kb_equipMenu_rezak(self)
         )
         await callback_query.answer()
+
+    class robotsAUT:
+        def __init__(self):
+            router.callback_query(F.data == "equipMenu_autRob_DJI_RoboMasterS1")(self.handle_equipMenu_autRob_DJI_RoboMasterS1)
+            router.callback_query(F.data == "equipMenu_autRob_DJI_RoboMasterS1_SvodkaOsnov")(self.handle_equipMenu_autRob_RoboMasterS1_SvodkaOsnov)
+            router.callback_query(F.data == "equipMenu_autRob_DJI_RoboMasterS1_suggest")(self.handle_equipMenu_autRob_DJI_RoboMasterS1_sugges)
+            router.callback_query(F.data == "DJI_RoboMasterS1_back")(self.handle_equipMenu_autRob_DJI_RoboMasterS1_back)
+
+        def load_instruct(self):
+            with open('instruct.yaml', 'r', encoding='utf-8') as file:
+                return yaml.safe_load(file)
+
+
+        async def handle_equipMenu_autRob_DJI_RoboMasterS1(self, callback_query: CallbackQuery):
+                await callback_query.message.edit_caption(
+                    caption="Выберите интерисующий вас вопрос:",
+                    reply_markup=equips_menu.robots.robot_AUT.kb_equipMenu_autRobots_DJI_RoboMasterS1(self)
+                )
+                await callback_query.answer()
+
+        async def handle_equipMenu_autRob_DJI_RoboMasterS1_sugges(self, callback_query: CallbackQuery):
+                await callback_query.message.edit_caption(
+                    caption="Перед выключением опусти пушку! \n\n"
+                            "У S1 есть режим сна, но если ты просто выключаешь питание тумблером, башня застывает в том положении, в котором была. "
+                            "Если она задран вверх, а ты убираешь робота в сумку, при закрывании крышки нагрузка ложится на тонкие шестеренки привода наклона."
+                            " Они могут сломаться или сбиться с калибровки. Перед тем как щелкнуть тумблером, "
+                            "всегда опускай пушку горизонтально (в ноль) с помощью джойстика или голосовой команды. "
+                            "Так механизм разгружен, и робот готов к безопасной транспортировке.",
+
+                    reply_markup=equips_menu.robots.robot_AUT.kb_equipMenu_autRobots_DJI_RoboMasterS1_back(self)
+                )
+                await callback_query.answer()
+
+        async def handle_equipMenu_autRob_RoboMasterS1_SvodkaOsnov(self, callback_query: CallbackQuery):
+            instructions = eqiup_menu_kategiry.load_instruct(self)
+            await callback_query.message.delete()
+            await asyncio.sleep(0.6)
+            await callback_query.message.answer(
+                text=instructions['robo_aut_DJI_RoboMaster_S1'],
+                reply_markup=equips_menu.robots.robot_AUT.kb_equipMenu_autRobots_DJI_RoboMasterS1_back(self)
+            )
+            await callback_query.answer()
+
+        async def handle_equipMenu_autRob_DJI_RoboMasterS1_back(self, callback_query: CallbackQuery):
+            await callback_query.message.delete()
+            await asyncio.sleep(0.6)
+            await callback_query.message.answer_photo(
+                photo=open('resources/mein_picture').read().strip(),
+                caption="Выберите интерисующий вас вопрос:",
+                reply_markup=equips_menu.robots.robot_AUT.kb_equipMenu_autRobots_DJI_RoboMasterS1(self)
+                    )
+            await callback_query.answer()
+    robotsAUT=robotsAUT()
+
+    class BPLA:
+        def __init__(self):
+            router.callback_query(F.data == "equipMenu_BPLA_GEOSCAN")(self.handle_BPLA_GEOSCAN)
+            router.callback_query(F.data == "equipMenu_BPLA_GEOSCAN_firstStartFly")(self.handle_BPLA_GEOSCAN_firstStartFly)
+            router.callback_query(F.data == "equipMenu_BPLA_GEOSCAN_back")(self.handle_BPLA_GEOSCAN_back)
+
+        def load_instruct(self):
+            with open('instruct.yaml', 'r', encoding='utf-8') as file:
+                return yaml.safe_load(file)
+
+        async def handle_BPLA_GEOSCAN(self, callback_query: CallbackQuery):
+            await callback_query.message.edit_caption(
+                caption="Выберите интерисующий вас вопрос:",
+                reply_markup=equips_menu.BPLA.kb_equipMenu_BPLA_GEOSCAN_menu(self)
+            )
+            await callback_query.answer()
+
+        async def handle_BPLA_GEOSCAN_firstStartFly(self, callback_query: CallbackQuery):
+            instructions = eqiup_menu_kategiry.load_instruct(self)
+            await callback_query.message.delete()
+            await asyncio.sleep(0.6)
+            await callback_query.message.answer(
+                text=instructions['BPLA_geoscan_pioner'],
+                reply_markup=equips_menu.BPLA.kb_equipMenu_BPLA_GEOSCAN_back(self)
+            )
+            await callback_query.answer()
+
+        async def handle_BPLA_GEOSCAN_back(self, callback_query: CallbackQuery):
+            await callback_query.message.delete()
+            await asyncio.sleep(0.6)
+            await callback_query.message.answer_photo(
+                photo=open('resources/mein_picture').read().strip(),
+                caption="Выберите интерисующий вас вопрос:",
+                reply_markup=equips_menu.BPLA.kb_equipMenu_BPLA_GEOSCAN_menu(self)
+            )
+            await callback_query.answer()
+    BPLA=BPLA()
 
     class rezaki:
         def __init__(self):
@@ -292,9 +383,7 @@ class eqiup_menu_kategiry:
                 reply_markup=equips_menu.rezak.xTooL_P2.kb_equipMenu_rezak_xTooL_P2_suggest(self)
             )
             await callback_query.answer()
-
     rezaki=rezaki()
-
 
 eqiup_menu_kategirys = eqiup_menu_kategiry()
 

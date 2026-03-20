@@ -72,7 +72,7 @@ class equips_menu:
         def kb_equipMenu_autRobots(self):
             keyboard_equipMenu_autRobots = InlineKeyboardMarkup(
                 inline_keyboard=[
-                    [InlineKeyboardButton(text="Пушка/без пушки", callback_data="equipMenu_autRob_Push")],
+                    [InlineKeyboardButton(text="DJI RoboMaster S1", callback_data="equipMenu_autRob_DJI_RoboMasterS1")],
                     [InlineKeyboardButton(text="🧲 - Назад", callback_data="equip")]
                 ]
             )
@@ -83,12 +83,29 @@ class equips_menu:
                 inline_keyboard=[
                     [InlineKeyboardButton(text="Железный набор", callback_data="equipMenu_legoRob_iron")],
                     [InlineKeyboardButton(text="Электрический' набор", callback_data="equipMenu_legoRob_electro")],
-                    [InlineKeyboardButton(text="Железно-Электрический набор",
-                                          callback_data="equipMenu_legoRob_electroIron")],
+                    [InlineKeyboardButton(text="Железно-Электрический набор", callback_data="equipMenu_legoRob_electroIron")],
                     [InlineKeyboardButton(text="🧲 - Назад", callback_data="equip")]
                 ]
             )
             return keyboard_equipMenu_legoRobots
+        class robot_AUT:
+            def kb_equipMenu_autRobots_DJI_RoboMasterS1(self):
+                keyboard_equipMenu_AutRobotsPush = InlineKeyboardMarkup(
+                    inline_keyboard=[
+                        [InlineKeyboardButton(text="Сводка по основным моментам при первом использовании", callback_data="equipMenu_autRob_DJI_RoboMasterS1_SvodkaOsnov")],
+                        [InlineKeyboardButton(text="Советы", callback_data="equipMenu_autRob_DJI_RoboMasterS1_suggest")],
+                        [InlineKeyboardButton(text="🧲 - Назад", callback_data="equipMenu_autRob")]
+                    ]
+                )
+                return keyboard_equipMenu_AutRobotsPush
+            def kb_equipMenu_autRobots_DJI_RoboMasterS1_back(self):
+                keyboard_equipMenu_AutRobotsPush = InlineKeyboardMarkup(
+                    inline_keyboard=[
+                        [InlineKeyboardButton(text="🧲 - Назад", callback_data="DJI_RoboMasterS1_back")]
+                    ]
+                )
+                return keyboard_equipMenu_AutRobotsPush
+
 
 #    robots = robots()
 
@@ -107,11 +124,29 @@ class equips_menu:
 #    stacion = stacion()
 
     class BPLA:
+
         def kb_equipMenu_BPLA(self):
             keyboard_equipMenu_BPLA = InlineKeyboardMarkup(
                 inline_keyboard=[
-                    [InlineKeyboardButton(text="Дрон", callback_data="equipMenu_BPLA_dron")],
+                    [InlineKeyboardButton(text="GEOSCAN Пионер", callback_data="equipMenu_BPLA_GEOSCAN")],
                     [InlineKeyboardButton(text="🧲 - Назад", callback_data="equip")]
+                ]
+            )
+            return keyboard_equipMenu_BPLA
+
+        def kb_equipMenu_BPLA_GEOSCAN_menu(self):
+            keyboard_equipMenu_BPLA = InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [InlineKeyboardButton(text="Первый запуск и полет!", callback_data="equipMenu_BPLA_GEOSCAN_firstStartFly")],
+                    [InlineKeyboardButton(text="🧲 - Назад", callback_data="equipMenu_BPLA")]
+                ]
+            )
+            return keyboard_equipMenu_BPLA
+
+        def kb_equipMenu_BPLA_GEOSCAN_back(self):
+            keyboard_equipMenu_BPLA = InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [InlineKeyboardButton(text="🧲 - Назад", callback_data="equipMenu_BPLA_GEOSCAN_back")]
                 ]
             )
             return keyboard_equipMenu_BPLA
