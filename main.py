@@ -10,6 +10,7 @@ from commands import router as commands_router
 from handlerKB import router as kb_router
 from supFuns import wait_router_sup
 from neuroChatting import wait_router_Ai
+from rooms import wait_router_rooms
 '''Утилиты'''
 from aiogram.client.session.aiohttp import AiohttpSession
 from datetime import datetime
@@ -34,6 +35,7 @@ async def startBot():
         dp.include_router(commands_router)
         dp.include_router(wait_router_sup)
         dp.include_router(wait_router_Ai)
+        dp.include_router(wait_router_rooms)
 
         bot = Bot(os.getenv('TELEGRAM_BOT_TOKEN'), session=session)
 

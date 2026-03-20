@@ -1,9 +1,10 @@
 from aiogram import Router, F
 from aiogram.fsm import state
 from aiogram.types import CallbackQuery
-
+import yaml
+from pathlib import Path
 from supFuns import supRespStat
-from inlineKeyBoard_db import kbBase_main_menu, kbBase_equip_main_menu, kb_test
+from inlineKeyBoard_db import kbBase_main_menu, kbBase_equip_main_menu, kb_test, kbBase_roomMenus, equips_menu
 import logging
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 import asyncio
@@ -11,6 +12,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from supFuns import supRespStat
 from neuroChatting import ChatStates
+from rooms import roomStates
 
 router = Router()
 logger = logging.getLogger(__name__)
@@ -92,11 +94,18 @@ class main_menu:
         await callback_query.answer()
 
     async def handle_equip(self, callback_query: CallbackQuery):
+        instructions = eqiup_menu_kategiry.load_instruct(self)
         pictireFile = open('resources/mein_picture').read().strip()
         if "Выберите опцию" in callback_query.message.caption:
             await callback_query.message.edit_caption(
-                caption="Выберите категорию оборудования, по которой вам нужна помощь:",
-                reply_markup=kbBase_equip_main_menu.equips_menu()
+                caption="При работе с оборудованием обязательно ознакомьтесь с техникой безопасности!\n"
+                        f"<blockquote expandable='true'>\n"
+                        f"{instructions['SAFETY_PRECAUTIONS']}"
+                        f"</blockquote>"
+                        "\nВыберите категорию оборудования, по которой вам нужна помощь:",
+
+                reply_markup=kbBase_equip_main_menu.equips_menu(),
+                parse_mode = "HTML"
             )
 
         else:
@@ -104,8 +113,14 @@ class main_menu:
             await asyncio.sleep(0.6)
             await callback_query.message.answer_photo(
                 photo=pictireFile,
-                caption="Выберите категорию оборудования, по которой вам нужна помощь:",
-                reply_markup=kbBase_equip_main_menu.equips_menu()
+                caption="При работе с оборудованием обязательно ознакомьтесь с техникой безопасности!\n"
+                        f"<blockquote expandable='true'>\n"
+                        f"{instructions['SAFETY_PRECAUTIONS']}"
+                        f"</blockquote>"
+                        "\nВыберите категорию оборудования, по которой вам нужна помощь:",
+
+                reply_markup=kbBase_equip_main_menu.equips_menu(),
+                parse_mode = "HTML"
             )
         await callback_query.answer()
 
@@ -147,6 +162,11 @@ class eqiup_menu_kategiry:
         router.callback_query(F.data == "equipMenu_3Dprint")(self.handle_equipMenu_3Dprint)
         router.callback_query(F.data == "equipMenu_rez")(self.handle_equipMenu_rez)
 
+    def load_instruct(self):
+        with open('instruct.yaml', 'r', encoding='utf-8') as file:
+            return yaml.safe_load(file)
+
+
     async def handle_equipMenu_autRob(self, callback_query: CallbackQuery):
         await callback_query.message.edit_caption(
             caption="Выберите категорию автоматических роботов.",
@@ -187,21 +207,123 @@ class eqiup_menu_kategiry:
             reply_markup=kbBase_equip_main_menu.rezak.kb_equipMenu_rezak(self)
         )
         await callback_query.answer()
+
+    class rezaki:
+        def __init__(self):
+            router.callback_query(F.data == "equipMenu_rezak_trees")(self.handle_rezak_derevo)
+            router.callback_query(F.data == "equipMenu_rezak_xTooL_P2")(self.handle_rezak_xTooL_P2)
+
+            router.callback_query(F.data == "equipMenu_rezak_xTooL_P2_firstProg")(self.handle_rezak_xTooL_P2_firstProg)
+            router.callback_query(F.data == "equipMenu_rezak_xTooL_P2_suggest")(self.handle_rezak_xTooL_P2_suggest)
+            router.callback_query(F.data == "equipMenu_rezak_xTooL_P2_suggest_graphicEdit")(self.handle_rezak_xTooL_P2_suggest_graphicEdit)
+            router.callback_query(F.data == "equipMenu_rezak_xTooL_P2_suggest_gravirovka")(self.handle_rezak_xTooL_P2_suggest_gravirovka)
+            router.callback_query(F.data == "equipMenu_rezak_xTooL_P2_suggest_other")(self.handle_rezak_xTooL_P2_suggest_other)
+            router.callback_query(F.data == "equipMenu_rezak_xTooL_P2_back")(self.handle_rezak_xTooL_P2_back)
+            router.callback_query(F.data == "equipMenu_rezak_xTooL_P2_backSug")(self.handle_rezak_xTooL_P2_backSug)
+        async def handle_rezak_derevo(self, callback_query: CallbackQuery):
+            await callback_query.message.edit_caption(
+                caption="Выберите интерисующую вас модель:",
+                reply_markup=equips_menu.rezak.kb_equipMenu_rezak_derevo(self)
+            )
+            await callback_query.answer()
+
+        async def handle_rezak_xTooL_P2(self, callback_query: CallbackQuery):
+            await callback_query.message.edit_caption(
+                caption="Выберите интерисующий вас вопрос:",
+                reply_markup=equips_menu.rezak.xTooL_P2.kb_equipMenu_rezak_xTooL_P2(self)
+            )
+            await callback_query.answer()
+
+        async def handle_rezak_xTooL_P2_firstProg(self, callback_query: CallbackQuery):
+            instructions = eqiup_menu_kategiry.load_instruct(self)
+            await callback_query.message.delete()
+            await asyncio.sleep(0.6)
+            await callback_query.message.answer(
+                text=instructions['rezak_derevo_xTooL_P2'],
+                reply_markup=equips_menu.rezak.xTooL_P2.kb_xTooL_P2_back(self)
+            )
+            await callback_query.answer()
+
+        async def handle_rezak_xTooL_P2_suggest(self, callback_query: CallbackQuery):
+            await callback_query.message.edit_caption(
+                caption="Выберите тему совета:",
+                reply_markup=equips_menu.rezak.xTooL_P2.kb_equipMenu_rezak_xTooL_P2_suggest(self)
+            )
+            await callback_query.answer()
+
+        async def handle_rezak_xTooL_P2_suggest_graphicEdit(self, callback_query: CallbackQuery):
+            instructions = eqiup_menu_kategiry.load_instruct(self)
+            await callback_query.message.edit_caption(
+                caption=instructions['rezak_derevo_xTooL_P2_suggest_graphicEdit'],
+                reply_markup=equips_menu.rezak.xTooL_P2.kb_xTooL_P2_backSug(self)
+            )
+            await callback_query.answer()
+        async def handle_rezak_xTooL_P2_suggest_gravirovka(self, callback_query: CallbackQuery):
+            instructions = eqiup_menu_kategiry.load_instruct(self)
+            await callback_query.message.edit_caption(
+                caption=instructions['rezak_derevo_xTooL_P2_suggest_gravirovka'],
+                reply_markup=equips_menu.rezak.xTooL_P2.kb_xTooL_P2_backSug(self)
+            )
+            await callback_query.answer()
+        async def handle_rezak_xTooL_P2_suggest_other(self, callback_query: CallbackQuery):
+            instructions = eqiup_menu_kategiry.load_instruct(self)
+            await callback_query.message.edit_caption(
+                caption=instructions['rezak_derevo_xTooL_P2_suggest_other'],
+                reply_markup=equips_menu.rezak.xTooL_P2.kb_xTooL_P2_backSug(self)
+            )
+            await callback_query.answer()
+
+        async def handle_rezak_xTooL_P2_back(self, callback_query: CallbackQuery):
+            await callback_query.message.delete()
+            await asyncio.sleep(0.6)
+            await callback_query.message.answer_photo(
+                photo= open('resources/mein_picture').read().strip(),
+                caption="Выберите интерисующий вас вопрос:",
+                reply_markup=equips_menu.rezak.xTooL_P2.kb_equipMenu_rezak_xTooL_P2(self)
+            )
+            await callback_query.answer()
+
+        async def handle_rezak_xTooL_P2_backSug(self, callback_query: CallbackQuery):
+            await callback_query.message.delete()
+            await asyncio.sleep(0.6)
+            await callback_query.message.answer_photo(
+                photo= open('resources/mein_picture').read().strip(),
+                caption="Выберите тему совета:",
+                reply_markup=equips_menu.rezak.xTooL_P2.kb_equipMenu_rezak_xTooL_P2_suggest(self)
+            )
+            await callback_query.answer()
+
+    rezaki=rezaki()
+
+
 eqiup_menu_kategirys = eqiup_menu_kategiry()
+
 
 class room_menu_main:
     def __init__(self):
-        router.callback_query(F.data == "room_teach")(self.handle_room_teach)
-        router.callback_query(F.data == "room_stud")(self.handle_room_stud)
+        router.callback_query(F.data == "room_create")(self.handle_room_create)
+        router.callback_query(F.data == "room_join")(self.handle_room_join)
+        router.callback_query(F.data == "room_solo")(self.handle_room_solo)
 
-    async def handle_room_teach(self, callback_query: CallbackQuery):
-        await callback_query.message.answer("Выберите темы и задания.")
+        router.callback_query(F.data == "room_test-safety")(self.handle_room_test_safety)
+
+    async def handle_room_create(self, callback_query: CallbackQuery):
+        await callback_query.message.answer("Создание комнаты 🌟..")
         await callback_query.answer()
 
-    async def handle_room_stud(self, callback_query: CallbackQuery):
+    async def handle_room_join(self, callback_query: CallbackQuery):
         await callback_query.message.answer("Впишите код для подключения к комнате.")
         await callback_query.answer()
 
+    async def handle_room_solo(self, callback_query: CallbackQuery):
+        await callback_query.message.answer("Выберите тему теста:", reply_markup=kbBase_roomMenus.kb_room_placeTest())
+        await callback_query.answer()
+
+    async def handle_room_test_safety(self, callback_query: CallbackQuery, state: FSMContext):
+        await callback_query.message.answer("Вы выбрали технику безопасности, сейчас начнется тест!", reply_markup=kbBase_roomMenus.kb_room_placeTest())
+        await callback_query.answer()
+        await asyncio.sleep(1)
+        await state.set_state(roomStates.roomKeySOLOSwait)
 room_menu_main_class = room_menu_main()
 
 class sup_menu:

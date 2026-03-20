@@ -4,8 +4,6 @@ from typing import Dict, List
 from aiogram import types
 import requests
 from aiogram import Router
-from aiogram.types import Update
-
 from inlineKeyBoard_db import kbBase_main_menu
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
@@ -25,7 +23,7 @@ class YandexNeuralChat:
     def __init__(self):
         self.key = os.getenv('YANDEX_SERVICE_KEY')
         self.folder = os.getenv('YANDEX_FOLDER_KEY')
-        self.memory: Dict[int, List[dict]] = {}
+        self.memory: Dict[str, List[dict]] = {}
         '''История чата user_id - [messages]'''
 
     @staticmethod
@@ -49,7 +47,7 @@ class YandexNeuralChat:
         data = {
             "modelUri": f"gpt://{self.folder}/yandexgpt",
             "messages": self.memory[user_id][-6:],  # Последние 3 пары
-            "completionOptions": {"temperature": 0.6}
+            "completionOptions": {"temperature": 0.3}
         }
 
         r = requests.post(url, headers=headers, json=data)
