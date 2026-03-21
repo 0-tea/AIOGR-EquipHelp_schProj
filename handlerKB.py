@@ -132,11 +132,20 @@ class main_menu:
         await state.set_state(ChatStates.IsNeuralChatting)
 
     async def handle_room(self, callback_query: CallbackQuery):
-        await callback_query.message.edit_caption(
-            caption="Присоеденитесь к уже существующей комнате, создайте свою или пройдите тест самостоятельно.",
-            reply_markup=kbBase_main_menu.kb_room_view()
-        )
-        await callback_query.answer()
+        try:
+            if "Тест" not in callback_query.message.caption:
+                await callback_query.message.edit_caption(
+                    caption="✏ Присоеденитесь к уже существующей комнате, создайте свою или пройдите тест самостоятельно.",
+                    reply_markup=kbBase_main_menu.kb_room_view()
+                )
+                await callback_query.answer()
+        except:
+            await callback_query.message.answer_photo(
+                photo=open('resources/mein_picture').read().strip(),
+                caption="✏ Присоеденитесь к уже существующей комнате, создайте свою или пройдите тест самостоятельно.",
+                reply_markup=kbBase_main_menu.kb_room_view()
+            )
+            await callback_query.answer()
 
     async def handle_support(self, callback_query: CallbackQuery, state: FSMContext):
         try:
@@ -390,29 +399,36 @@ eqiup_menu_kategirys = eqiup_menu_kategiry()
 
 class room_menu_main:
     def __init__(self):
-        router.callback_query(F.data == "room_create")(self.handle_room_create)
-        router.callback_query(F.data == "room_join")(self.handle_room_join)
+#        router.callback_query(F.data == "room_create")(self.handle_room_create)
+#       router.callback_query(F.data == "room_join")(self.handle_room_join)'''
         router.callback_query(F.data == "room_solo")(self.handle_room_solo)
 
-        router.callback_query(F.data == "room_test-safety")(self.handle_room_test_safety)
+#        router.callback_query(F.data == "room_test-safety")(self.handle_room_test_safety)
+    async def handle_room_solo(self, callback_query: CallbackQuery):
+        await callback_query.message.answer("Выберите тему теста. Тест начнется сразуже:",
+                                            reply_markup=kbBase_roomMenus.kb_room_placeTest())
+        await callback_query.answer()
 
-    async def handle_room_create(self, callback_query: CallbackQuery):
+
+
+'''    async def handle_room_create(self, callback_query: CallbackQuery):
         await callback_query.message.answer("Создание комнаты 🌟..")
         await callback_query.answer()
 
     async def handle_room_join(self, callback_query: CallbackQuery):
         await callback_query.message.answer("Впишите код для подключения к комнате.")
-        await callback_query.answer()
+        await callback_query.answer()'''
 
-    async def handle_room_solo(self, callback_query: CallbackQuery):
-        await callback_query.message.answer("Выберите тему теста:", reply_markup=kbBase_roomMenus.kb_room_placeTest())
-        await callback_query.answer()
 
-    async def handle_room_test_safety(self, callback_query: CallbackQuery, state: FSMContext):
-        await callback_query.message.answer("Вы выбрали технику безопасности, сейчас начнется тест!", reply_markup=kbBase_roomMenus.kb_room_placeTest())
+
+
+
+'''    async def handle_room_test_safety(self, callback_query: CallbackQuery, state: FSMContext):
+        await callback_query.message.answer("Вы выбрали технику безопасности, сейчас начнется тест!")
         await callback_query.answer()
         await asyncio.sleep(1)
-        await state.set_state(roomStates.roomKeySOLOSwait)
+        await state.set_state(roomStates.roomKeySOLOSwait)'''
+
 room_menu_main_class = room_menu_main()
 
 class sup_menu:
